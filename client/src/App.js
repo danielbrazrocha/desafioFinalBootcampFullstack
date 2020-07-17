@@ -4,6 +4,7 @@ import TransactionService from "./services/TransactionService";
 import "./index.css";
 import Summary from "./components/Summary";
 import Spinner from "./components/Spinner";
+import SearchBar from "./components/SearchBar";
 
 const actualDate = new Date();
 const options = { year: "numeric", month: "numeric" };
@@ -23,7 +24,28 @@ export default function App() {
   const [monthList, setMonthList] = useState([]);
   const [summary, setSummary] = useState([]);
 
-  //falta implementar a busca no BD retornando lista de meses  em um array, feito a mao acima
+  const onFilter = (newFilter) => {
+    
+    const newFilterLowerCase = newFilter.toLowerCase();
+    try {
+      if (!newFilter) {
+        retrieveTransactions();
+      }
+
+      const filteredTransactions = actualTransactions.filter((item) => {
+        return item.descriptionLowerCase.includes(newFilterLowerCase);
+      });
+      if (filteredTransactions.length == 0) {
+        window.alert("Transação não encontrada!. Busca reiniciada");
+        retrieveTransactions();
+      }
+
+      loadInitialTransactions(filteredTransactions);
+      setActualTransactions(filteredTransactions);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const retrieveTransactions = () => {
     TransactionService.get(month)
@@ -68,18 +90,33 @@ export default function App() {
     if (e.target.id === "selectMonth") {
       console.log(`Troquei o mês no combo para ${e.target.value}`);
       setMonth(e.target.value);
-      //newTransactions(e.target.value);
     }
     console.log(`o mês definido foi ${month}`);
   };
 
+  function _prepareTransaction(transaction) {
+    const { _id, description, category, month, ...otherFields } = transaction;
+
+    return {
+      _id,
+      description,
+      category,
+      month,
+      descriptionLowerCase: description.toLowerCase(),
+      categoryLowerCase: category.toLowerCase(),
+      ...otherFields,
+    };
+  };
+
+
+
   const loadInitialTransactions = (data) => {
+
     let countTransactions = data.length;
     let totalEarnings = 0;
     let totalExpenses = 0;
 
     for (let i = 0; i < data.length; i++) {
-      //console.log(locatedAgency.balance);
       if (data[i].type === "+") {
         totalEarnings = totalEarnings + data[i].value;
       }
@@ -96,7 +133,13 @@ export default function App() {
       balance,
     });
 
-    setActualTransactions(data);
+
+
+    const dataLowerCase = data.map((transaction) => {
+      return _prepareTransaction(transaction);
+    });
+    debugger
+    setActualTransactions(dataLowerCase);
   };
 
   useEffect(() => {
@@ -128,7 +171,7 @@ export default function App() {
             className="center browser-default custom-select"
           >
             {monthList.map((item, key) => (
-              <option key={key} value={item}>{`${item.substring(5,7)}-${item.substring(0, 4)}`}</option>
+              <option key={key} value={item}>{`${item.substring(5, 7)}-${item.substring(0, 4)}`}</option>
             ))}
           </select>
         </div>
@@ -140,10 +183,12 @@ export default function App() {
         </div>
       </div>
 
-      
-      
+
+
+
       {actualTransactions.length === 0 && <Spinner>Aguarde...</Spinner>}
       {actualTransactions.length > 0 && <Summary data={summary} />}
+      {actualTransactions.length > 0 && <SearchBar data={{ onFilter }} />}
       <Transactions data={{ actualTransactions, onDeleteTransaction }} />
     </div>
   );

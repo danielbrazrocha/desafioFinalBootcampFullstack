@@ -23,3 +23,21 @@ code {
   border: 1px solid lightgrey;
   border-radius: 4px;
 }
+
+.search {  
+  display: flex;
+  flex-direction: row ; 
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px;
+  margin: 4px;
+  
+  
+  
+}
+
+.textInput {
+  margin-left: 10px;
+  display: flex;
+  flex: 1;
+}
