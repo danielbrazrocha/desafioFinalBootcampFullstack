@@ -21,24 +21,29 @@ const actualMonth = `${actualMonthPreFormat.substring(
 export default function App() {
   const [month, setMonth] = useState(actualMonth);
   const [actualTransactions, setActualTransactions] = useState([]);
+  const [initialTransactions, setInitialTransactions] = useState([]);
+
   const [monthList, setMonthList] = useState([]);
   const [summary, setSummary] = useState([]);
 
   const onFilter = (newFilter) => {
-    
+
     const newFilterLowerCase = newFilter.toLowerCase();
     try {
       if (!newFilter) {
         retrieveTransactions();
-      }
+      };
 
       const filteredTransactions = actualTransactions.filter((item) => {
         return item.descriptionLowerCase.includes(newFilterLowerCase);
       });
-      if (filteredTransactions.length == 0) {
+
+      
+      if (filteredTransactions.length === 0) {
         window.alert("Transação não encontrada!. Busca reiniciada");
         retrieveTransactions();
       }
+      
 
       loadInitialTransactions(filteredTransactions);
       setActualTransactions(filteredTransactions);
@@ -140,6 +145,7 @@ export default function App() {
     });
     debugger
     setActualTransactions(dataLowerCase);
+    setInitialTransactions(dataLowerCase);
   };
 
   useEffect(() => {

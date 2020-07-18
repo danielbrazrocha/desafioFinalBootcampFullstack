@@ -16,7 +16,7 @@ export default function SearchBar({data}) {
 
             <div>
                 <button id="newTransaction"  className="btn" onClick={handleNewTransaction}>
-                    <span> + Novo Lançamento </span>
+                    <span> + ADD </span>
                 </button>
             </div>
 

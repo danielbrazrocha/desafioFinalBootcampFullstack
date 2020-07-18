@@ -52,7 +52,7 @@ export default function Transaction( {data, onDeleteTransaction}) {
 
 const styles = {
     flexRow: {
-        fontSize: '1.8em',
+        fontSize: '1.5em',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
